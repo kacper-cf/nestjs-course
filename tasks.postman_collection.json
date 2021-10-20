@@ -128,6 +128,35 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "search tasks with filters",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/tasks?status=Open&search=123",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"tasks"
+					],
+					"query": [
+						{
+							"key": "status",
+							"value": "Open"
+						},
+						{
+							"key": "search",
+							"value": "123"
+						}
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
