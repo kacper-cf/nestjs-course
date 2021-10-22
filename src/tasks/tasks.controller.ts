@@ -11,7 +11,7 @@ import {
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTaskFilterDto } from './dto/get-tasks-filter-dto';
 import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
-import { Task, TaskStatus } from './task.model';
+import { Task } from './task.entity';
 import { TasksService } from './tasks.service';
 
 @Controller('tasks')
@@ -19,47 +19,36 @@ export class TasksController {
   constructor(private tasksService: TasksService) {}
 
   @Get()
-  getTasks(@Query() filterDto: GetTaskFilterDto): Array<Task> {
-    console.log(filterDto);
-
-    if (!Object.keys(filterDto)) {
-      return this.tasksService.getAllTasks();
-    }
-
+  getTasks(@Query() filterDto: GetTaskFilterDto): Promise<Array<Task>> {
     return this.tasksService.getTasksWithFilters(filterDto);
   }
 
   @Post()
-  createTask(@Body() createTaskDto: CreateTaskDto): Task {
+  createTask(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
     return this.tasksService.createTask(createTaskDto);
   }
 
   @Get(':id')
-  getTaskById(@Param('id') taskId: string): Task | undefined {
-    return this.tasksService.getTaskById(taskId);
+  async getTaskById(@Param('id') taskId: string): Promise<Task> {
+    const task = await this.tasksService.getTaskById(taskId);
+
+    return task;
   }
 
   @Delete(':id')
-  removeTaskById(@Param('id') taskId: string): {
-    message: string;
-  } {
-    const isOperationSuccessful = this.tasksService.removeTaskById(taskId);
+  async removeTaskById(
+    @Param('id') taskId: string,
+  ): Promise<{ message: string }> {
+    await this.tasksService.removeTaskById(taskId);
 
-    if (!isOperationSuccessful) {
-      return {
-        message: 'Task with specified ID was not found',
-      };
-    }
-
-    return {
-      message: 'Removed the task successfully',
-    };
+    return { message: 'Deleted successfully' };
   }
+
   @Patch(':id/status')
   updateTasksStatus(
     @Param('id') taskId: string,
     @Body() { status }: UpdateTaskStatusDto,
-  ): { message: string } {
+  ): Promise<Task> {
     return this.tasksService.updateTasksStatus(taskId, status);
   }
 }
