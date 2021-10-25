@@ -23,8 +23,8 @@ export class TasksRepository extends Repository<Task> {
     return createdTask;
   }
 
-  async removeTaskById(taskId: string): Promise<void> {
-    const { affected } = await this.delete(taskId);
+  async removeTaskById(taskId: string, user): Promise<void> {
+    const { affected } = await this.delete({ id: taskId, user });
 
     if (!affected) {
       throw new NotFoundException();
@@ -51,6 +51,8 @@ export class TasksRepository extends Repository<Task> {
     }
 
     const tasks = await query.getMany();
+
+    console.log(tasks);
 
     return tasks;
   }

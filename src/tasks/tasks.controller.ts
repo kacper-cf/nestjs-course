@@ -26,7 +26,7 @@ export class TasksController {
   @Get()
   getTasks(
     @Query() filterDto: GetTaskFilterDto,
-    user: User,
+    @GetUser() user: User,
   ): Promise<Array<Task>> {
     return this.tasksService.getTasks(filterDto, user);
   }
@@ -41,8 +41,11 @@ export class TasksController {
   }
 
   @Get(':id')
-  async getTaskById(@Param('id') taskId: string): Promise<Task> {
-    const task = await this.tasksService.getTaskById(taskId);
+  async getTaskById(
+    @Param('id') taskId: string,
+    @GetUser() user: User,
+  ): Promise<Task> {
+    const task = await this.tasksService.getTaskById(taskId, user);
 
     return task;
   }
@@ -50,8 +53,9 @@ export class TasksController {
   @Delete(':id')
   async removeTaskById(
     @Param('id') taskId: string,
+    @GetUser() user: User,
   ): Promise<{ message: string }> {
-    await this.tasksService.removeTaskById(taskId);
+    await this.tasksService.removeTaskById(taskId, user);
 
     return { message: 'Deleted successfully' };
   }
@@ -60,7 +64,8 @@ export class TasksController {
   updateTasksStatus(
     @Param('id') taskId: string,
     @Body() { status }: UpdateTaskStatusDto,
+    @GetUser() user: User,
   ): Promise<Task> {
-    return this.tasksService.updateTasksStatus(taskId, status);
+    return this.tasksService.updateTasksStatus(taskId, status, user);
   }
 }
